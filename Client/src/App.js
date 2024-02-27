@@ -7,17 +7,51 @@ import Footer from './footer.js'
 import Article from './article.js'
 import Left from './left.js'
 import Right from './right.js'
+const superagent = require('superagent');
+
+
+function update(section, value) {
+  return new Promise((resolve,reject) => {
+    var url = `/update/${section}/${value}`;
+    superagent
+      .get(url)
+      .end(function(err,res){
+        err ? reject(null) : resolve(res.body);
+      });
+  });
+}
+
+function read() {
+  return new Promise((resolve, reject) => {
+    var url = '/data';
+    superagent 
+      .get(url)
+      .end(function(err, res){
+        err ? reject(null) : resolve(res.body);
+      });
+  });
+}
 
 
 function App() {
 
   const [data, setData] = React.useState({header:0,left:0,article:0,right:0,footer:0});
 
+  React.useEffect(() => {
+
+    const response = read()
+      .then(res => {
+        setData(res)
+      });
+
+  },[]);
+
   function handle(section) {
-    console.log('Pong',section);
-    const value = data[section.name] + section.value;
-    const object = {[section.name]:value};
-    setData({...data, ...object});
+    //update db & local state
+    const response = update(section.name, section.value)
+      .then(res => {
+        setData(res)
+      });
   }
 
   return (

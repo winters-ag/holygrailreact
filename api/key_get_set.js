@@ -7,7 +7,7 @@ client.on('error', err => console.log('Redis Client Error', err));
   await client.connect();
 
   await client.set("my_key", "Hello World!");
-
+  await client.set("header", 1);
   const value = await client.get("my_key");
   console.log(value);
 
